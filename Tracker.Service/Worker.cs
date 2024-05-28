@@ -81,16 +81,9 @@ public class Worker : BackgroundService
                     var peer = new TorrentPeer(addressString, announceRequest.Port);
 
                     if ((Event)announceRequest.TorrentEvent == Event.Stopped)
-                    {
-                        _repository.RemovePeer(peer, announceRequest.TransactionID, announceRequest.InfoHash);
-                    }
+                        _repository.RemovePeer(peer, announceRequest.InfoHash);
                     else
-                    {
-                        var type = announceRequest.Left > 0 ? PeerType.Leecher : PeerType.Seeder;
-                        if ((Event)announceRequest.TorrentEvent == Event.Unknown)
-                            type = PeerType.Seeder;
-                        _repository.AddPeer(peer, announceRequest.TransactionID, announceRequest.InfoHash,type);
-                    }
+                        _repository.AddPeer(peer, announceRequest.InfoHash);
 
                     var peers = _repository.GetPeers(announceRequest.InfoHash);
                     var torrentInfo = _repository.ScrapeHashes(new List<byte[]> { announceRequest.InfoHash });

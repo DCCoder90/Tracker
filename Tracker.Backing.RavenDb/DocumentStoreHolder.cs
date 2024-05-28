@@ -6,16 +6,17 @@ internal class DocumentStoreHolder
 {
     // Use Lazy<IDocumentStore> to initialize the document store lazily. 
     // This ensures that it is created only once - when first accessing the public `Store` property.
-    private static IDocumentStore store = CreateStore();
+    private static Lazy<IDocumentStore> store = new Lazy<IDocumentStore>(CreateStore);
 
-    public static IDocumentStore Store => store;
+    public static IDocumentStore Store => store.Value;
     
     private static IDocumentStore CreateStore()
     {
         IDocumentStore store = new DocumentStore()
         {
             // Define the cluster node URLs (required)
-            Urls = new[] { "http://127.0.0.1:8080" },
+            Urls = new[] { "http://localhost", 
+                /*some additional nodes of this cluster*/ },
 
             // Set conventions as necessary (optional)
             Conventions =
@@ -34,7 +35,7 @@ internal class DocumentStoreHolder
         }.Initialize();
 
         // When the store is disposed of, the certificate file will be removed as well
-        //Store.AfterDispose += (sender, args) => Store.Certificate.Dispose();
+        Store.AfterDispose += (sender, args) => Store.Certificate.Dispose();
 
         return store;
     }
