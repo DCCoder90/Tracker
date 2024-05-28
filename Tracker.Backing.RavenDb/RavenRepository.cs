@@ -25,7 +25,7 @@ public class RavenRepository : IRepository
         session.SaveChanges();
     }
 
-    public void AddPeer(TorrentPeer peer, uint transactionId, byte[] hash, PeerType type = PeerType.Seeder)
+    public void AddPeer(TorrentPeer peer, ulong connectionId, byte[] hash, PeerType type = PeerType.Seeder)
     {
         using IDocumentSession session = _store.OpenSession();
         var storedPeer = new Peer
@@ -34,19 +34,23 @@ public class RavenRepository : IRepository
             IP = peer.GetIPString(),
             Port = peer.Port,
             PeerType = type,
-            TransactionId = transactionId
+            ConnectionId = connectionId,
+            Created = DateTimeOffset.Now
         };
         session.Store(storedPeer);
         session.SaveChanges();
     }
 
-    public void RemovePeer(TorrentPeer peer, uint transactionId, byte[] hash, PeerType type = PeerType.Seeder)
+    public void RemovePeer(TorrentPeer peer, ulong connectionId, byte[] hash, PeerType type = PeerType.Seeder)
     {
         using IDocumentSession session = _store.OpenSession();
         var hashString = Unpack.Hex(hash);
 
         var peerToDelete = session.Query<Peer>()
-            .SingleOrDefault(x => x.Hash == hashString && x.IP == peer.GetIPString() && x.TransactionId == transactionId);
+            .SingleOrDefault(x => x.Hash == hashString && x.IP == peer.GetIPString() && x.ConnectionId == connectionId);
+
+        if (peerToDelete == null)
+            return;
         
         session.Delete(peerToDelete);
         session.SaveChanges();
@@ -77,5 +81,21 @@ public class RavenRepository : IRepository
         }
 
         return torrentList;
+    }
+
+    public void ClearStale(TimeSpan tilStale)
+    {
+        using IDocumentSession session = _store.OpenSession();
+        
+        var peers = session.Query<Peer>().ToList();
+
+        foreach (var peer in peers)
+        {
+            var diff = DateTimeOffset.Now - peer.Created;
+            if(diff > tilStale)
+                session.Delete(peer);
+        }
+        
+        session.SaveChanges();
     }
 }
