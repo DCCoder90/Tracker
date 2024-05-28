@@ -4,10 +4,15 @@
         <TargetFramework>net7.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+        <RootNamespace>Tracker.RavenDb</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="StackExchange.Redis" Version="2.7.33" />
+      <ProjectReference Include="..\Tracker.Net\Tracker.Net.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="RavenDB.Client" Version="6.0.103" />
     </ItemGroup>
 
 </Project>

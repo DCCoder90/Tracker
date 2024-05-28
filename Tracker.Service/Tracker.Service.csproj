@@ -12,8 +12,8 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Tracker.Data\Tracker.Data.csproj" />
-      <ProjectReference Include="..\Tracker.RavenDb\Tracker.RavenDb.csproj" />
-      <ProjectReference Include="..\Tracker.Redis\Tracker.Redis.csproj" />
+      <ProjectReference Include="..\Tracker.Net\Tracker.Net.csproj" />
+      <ProjectReference Include="..\Tracker.Backing.RavenDb\Tracker.Backing.RavenDb.csproj" />
+      <ProjectReference Include="..\Tracker.Backing.Redis\Tracker.Backing.Redis.csproj" />
     </ItemGroup>
 </Project>
