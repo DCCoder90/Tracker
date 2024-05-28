@@ -14,16 +14,16 @@ public class Worker : BackgroundService
 {
     private readonly uint _announceInterval = 60;
     private readonly ILogger<Worker> _logger;
-    private readonly PeerRepository _peerRepository;
+    private readonly IRepository _repository;
     private ServiceState _state;
     private readonly UdpClient _udpClient;
 
-    public Worker(ILogger<Worker> logger)
+    public Worker(IRepository repository, ILogger<Worker> logger)
     {
         var port = 55551;
         var localEndpoint = new IPEndPoint(IPAddress.Any, port);
         _udpClient = new UdpClient(localEndpoint);
-        _peerRepository = new PeerRepository();
+        _repository = repository;
 
         _logger = logger;
 
@@ -81,12 +81,12 @@ public class Worker : BackgroundService
                     var peer = new TorrentPeer(addressString, announceRequest.Port);
 
                     if ((Event)announceRequest.TorrentEvent == Event.Stopped)
-                        _peerRepository.RemovePeer(peer, announceRequest.InfoHash);
+                        _repository.RemovePeer(peer, announceRequest.InfoHash);
                     else
-                        _peerRepository.AddPeer(peer, announceRequest.InfoHash);
+                        _repository.AddPeer(peer, announceRequest.InfoHash);
 
-                    var peers = _peerRepository.GetPeers(announceRequest.InfoHash);
-                    var torrentInfo = _peerRepository.ScrapeHashes(new List<byte[]> { announceRequest.InfoHash });
+                    var peers = _repository.GetPeers(announceRequest.InfoHash);
+                    var torrentInfo = _repository.ScrapeHashes(new List<byte[]> { announceRequest.InfoHash });
                     var seeders = torrentInfo.First().Seeders;
                     var leechers = torrentInfo.First().Leechers;
                     var announceResponse = new AnnounceResponse(announceRequest.TransactionID, _announceInterval,
@@ -100,7 +100,7 @@ public class Worker : BackgroundService
                     _logger.LogInformation(
                         $"[Scrape] from {addressString} for {scrapeRequest.InfoHashes.Count} torrents");
 
-                    var scrapedTorrents = _peerRepository.ScrapeHashes(scrapeRequest.InfoHashes);
+                    var scrapedTorrents = _repository.ScrapeHashes(scrapeRequest.InfoHashes);
                     var scrapeResponse = new ScrapeResponse(scrapeRequest.TransactionID, scrapedTorrents);
 
                     await SendDataAsync(_udpClient, scrapeResponse.Data, res.RemoteEndPoint);

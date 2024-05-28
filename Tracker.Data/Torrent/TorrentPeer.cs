@@ -19,6 +19,12 @@ public class TorrentPeer
         Port = port;
     }
 
+    public TorrentPeer(string ip, int port)
+    {
+        IP = IPAddress.Parse(ip).GetAddressBytes();
+        Port = (ushort)port;
+    }
+
     public TorrentPeer(IPAddress ip, ushort port)
     {
         IP = ip.GetAddressBytes();
