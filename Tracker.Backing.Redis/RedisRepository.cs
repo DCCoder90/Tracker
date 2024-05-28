@@ -37,7 +37,8 @@ public class RedisRepository : IRepository
         }
     }
 
-    public void AddPeer(TorrentPeer peer, byte[] hash, PeerType type = PeerType.Seeder)
+    //TODO: Implement transactionId
+    public void AddPeer(TorrentPeer peer, uint transactionId, byte[] hash, PeerType type = PeerType.Seeder)
     {
         var db = _backing.GetDatabase();
         var insert = peer.StringPeer();
@@ -52,8 +53,8 @@ public class RedisRepository : IRepository
             db.StringIncrement("l:" + stringHash); //amount of leechers
     }
 
-
-    public void RemovePeer(TorrentPeer peer, byte[] hash, PeerType type = PeerType.Seeder)
+    //TODO: Implement transactionId
+    public void RemovePeer(TorrentPeer peer, uint transactionId, byte[] hash, PeerType type = PeerType.Seeder)
     {
         var db = _backing.GetDatabase();
         var insert = peer.StringPeer();
