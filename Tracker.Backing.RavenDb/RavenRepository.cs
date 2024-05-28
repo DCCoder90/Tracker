@@ -25,7 +25,7 @@ public class RavenRepository : IRepository
         session.SaveChanges();
     }
 
-    public void AddPeer(TorrentPeer peer, byte[] hash, PeerType type = PeerType.Seeder)
+    public void AddPeer(TorrentPeer peer, uint transactionId, byte[] hash, PeerType type = PeerType.Seeder)
     {
         using IDocumentSession session = _store.OpenSession();
         var storedPeer = new Peer
@@ -33,19 +33,20 @@ public class RavenRepository : IRepository
             Hash = Unpack.Hex(hash),
             IP = peer.GetIPString(),
             Port = peer.Port,
-            PeerType = type
+            PeerType = type,
+            TransactionId = transactionId
         };
         session.Store(storedPeer);
         session.SaveChanges();
     }
 
-    public void RemovePeer(TorrentPeer peer, byte[] hash, PeerType type = PeerType.Seeder)
+    public void RemovePeer(TorrentPeer peer, uint transactionId, byte[] hash, PeerType type = PeerType.Seeder)
     {
         using IDocumentSession session = _store.OpenSession();
         var hashString = Unpack.Hex(hash);
 
         var peerToDelete = session.Query<Peer>()
-            .SingleOrDefault(x => x.Hash == hashString && x.IP == peer.GetIPString());
+            .SingleOrDefault(x => x.Hash == hashString && x.IP == peer.GetIPString() && x.TransactionId == transactionId);
         
         session.Delete(peerToDelete);
         session.SaveChanges();
