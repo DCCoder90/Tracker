@@ -54,4 +54,8 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{B270A9CD-D92E-43CE-A3D8-9789C81C5AB8} = {8C46E165-3C50-41B4-BBF0-AC504AC46ED9}
 	EndGlobalSection
+	GlobalSection(RiderSharedRunConfigurations) = postSolution
+		File = Database.run\Start Database.run.xml
+		File = TrackerService\Tracker.Service.run.xml
+	EndGlobalSection
 EndGlobal
