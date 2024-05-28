@@ -35,7 +35,7 @@ public class RavenRepository : IRepository
             Port = peer.Port,
             PeerType = type
         };
-        session.Store(peer);
+        session.Store(storedPeer);
         session.SaveChanges();
     }
 
