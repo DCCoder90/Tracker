@@ -15,8 +15,8 @@ public class Worker : BackgroundService
     private readonly uint _announceInterval = 60;
     private readonly ILogger<Worker> _logger;
     private readonly IRepository _repository;
-    private ServiceState _state;
     private readonly UdpClient _udpClient;
+    private ServiceState _state;
 
     public Worker(IRepository repository, ILogger<Worker> logger)
     {
@@ -89,7 +89,7 @@ public class Worker : BackgroundService
                         var type = announceRequest.Left > 0 ? PeerType.Leecher : PeerType.Seeder;
                         if ((Event)announceRequest.TorrentEvent == Event.Unknown)
                             type = PeerType.Seeder;
-                        _repository.AddPeer(peer, announceRequest.TransactionID, announceRequest.InfoHash,type);
+                        _repository.AddPeer(peer, announceRequest.TransactionID, announceRequest.InfoHash, type);
                     }
 
                     var peers = _repository.GetPeers(announceRequest.InfoHash);

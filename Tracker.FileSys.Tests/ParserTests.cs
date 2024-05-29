@@ -1,8 +1,8 @@
 using System.Text;
 using Shouldly;
-using Tracker.TorrentFile.Bencode;
+using Tracker.Filesys.Bencode;
 
-namespace Tracker.TorrentFile.Tests;
+namespace Tracker.FileSys.Tests;
 
 [TestFixture]
 public class BencodeParserTests
@@ -105,7 +105,6 @@ public class BencodeParserTests
         var bencodedData = "li42x";
         var stream = new MemoryStream(Encoding.UTF8.GetBytes(bencodedData));
         Should.Throw<UnexpectEndException>(() => BencodeParser.Parse(textEncoding, stream));
-
     }
 
     [Test]

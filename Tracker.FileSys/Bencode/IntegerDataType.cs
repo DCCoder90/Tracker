@@ -1,4 +1,4 @@
-namespace Tracker.TorrentFile.Bencode;
+namespace Tracker.Filesys.Bencode;
 
 public class IntegerDataType : DataTypeBase<long>
 {

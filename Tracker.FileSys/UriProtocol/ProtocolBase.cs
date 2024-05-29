@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Text;
 
-namespace Tracker.TorrentFile.UriProtocol;
+namespace Tracker.Filesys.UriProtocol;
 
 public abstract class ProtocolBase
 {

@@ -1,7 +1,7 @@
 using System.Text;
-using Tracker.TorrentFile.Bencode;
+using Tracker.Filesys.Bencode;
 
-namespace Tracker.TorrentFile.Torrent;
+namespace Tracker.Filesys.Torrent;
 
 internal class TorrentBencodeAdapter
 {
@@ -10,14 +10,14 @@ internal class TorrentBencodeAdapter
     public static void FillInfoFromFile(DictionaryDataType rootNode, TorrentFile file)
     {
         var meta = file.MetaInfo;
-        
+
         var encoding = GetEncoding(rootNode);
         if (encoding != null)
         {
             file.Encoding = encoding;
             rootNode.TextEncoding = encoding;
         }
-        
+
         file.Announce = GetValue(rootNode, "announce");
         var alist = rootNode["announce-list"] as ListDataType;
         file.AnnounceList = alist == null
@@ -33,7 +33,7 @@ internal class TorrentBencodeAdapter
         var dateNode = rootNode["creation date"];
         if (dateNode != null && dateNode is IntegerDataType)
             file.CreationDate = new DateTime(1970, 1, 1).AddSeconds((dateNode as IntegerDataType).Value);
-        
+
         file.Nodes = GetNodeList(rootNode, "nodes");
 
         file.IsPrivate = GetInt32(rootNode, "private") > 0;
@@ -53,7 +53,7 @@ internal class TorrentBencodeAdapter
             meta.Files = GetFileList(filesNode);
 
 
-        meta.Pieces = GetByteValue(metaNode, "pieces"); 
+        meta.Pieces = GetByteValue(metaNode, "pieces");
         meta.Publisher = GetValue(metaNode, "publisher");
         meta.PublisherUrl = GetValue(metaNode, "publisher-url");
     }

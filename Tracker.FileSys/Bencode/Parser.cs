@@ -1,6 +1,6 @@
 using System.Text;
 
-namespace Tracker.TorrentFile.Bencode;
+namespace Tracker.Filesys.Bencode;
 
 public class BencodeParser
 {
@@ -41,7 +41,7 @@ public class BencodeParser
             else if (ch == 'd')
                 list.Add(ParseAsDicionary(textEncoding, stream));
             else
-                break; 
+                break;
         }
     }
 

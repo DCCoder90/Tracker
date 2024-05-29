@@ -8,8 +8,6 @@ namespace Tracker.Redis;
 
 public class RedisRepository : IRepository
 {
-    public string BackingType => "Redis";
-
     private readonly ConnectionMultiplexer _backing;
 
     public RedisRepository()
@@ -25,6 +23,8 @@ public class RedisRepository : IRepository
         };
         _backing = ConnectionMultiplexer.Connect(options);
     }
+
+    public string BackingType => "Redis";
 
     public void ResetHash(string hash)
     {

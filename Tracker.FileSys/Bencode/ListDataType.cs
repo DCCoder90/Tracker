@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Text;
 
-namespace Tracker.TorrentFile.Bencode;
+namespace Tracker.Filesys.Bencode;
 
 public class ListDataType : DataTypeBase<List<DataTypeBase>>, IEnumerable<DataTypeBase>
 {

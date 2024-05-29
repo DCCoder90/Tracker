@@ -1,12 +1,12 @@
 using System.Collections;
 using System.Text;
 
-namespace Tracker.TorrentFile.Bencode;
+namespace Tracker.Filesys.Bencode;
 
 public class DictionaryDataType : DataTypeBase, IEnumerable<KeyValuePair<string, DataTypeBase>>
 {
-    private Dictionary<string, DataTypeBase> _keyMap;
     private readonly object _lockObject = new();
+    private Dictionary<string, DataTypeBase> _keyMap;
     private SortedDictionary<string, DataTypeBase> _valueMap;
 
     public DictionaryDataType()
@@ -58,11 +58,8 @@ public class DictionaryDataType : DataTypeBase, IEnumerable<KeyValuePair<string,
                 {
                     var list = value as ListDataType;
                     var olist = data as ListDataType;
-                    
-                    foreach (var item in list)
-                    {
-                        olist.Add(item);
-                    }
+
+                    foreach (var item in list) olist.Add(item);
                 }
             }
             else

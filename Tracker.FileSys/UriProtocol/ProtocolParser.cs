@@ -1,4 +1,4 @@
-﻿namespace Tracker.TorrentFile.UriProtocol;
+﻿namespace Tracker.Filesys.UriProtocol;
 
 public class ProtocolParser
 {

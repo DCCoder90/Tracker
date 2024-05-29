@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace Tracker.TorrentFile.UriProtocol;
+namespace Tracker.Filesys.UriProtocol;
 
 public class MagnetProtocolXtHashedBase : MagnetProtocolXtBase, INotifyPropertyChanged
 {

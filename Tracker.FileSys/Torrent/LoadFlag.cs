@@ -1,4 +1,4 @@
-namespace Tracker.TorrentFile.Torrent;
+namespace Tracker.Filesys.Torrent;
 
 [Flags]
 public enum LoadFlag

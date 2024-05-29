@@ -1,15 +1,15 @@
 using System.Text;
 
-namespace Tracker.TorrentFile.Bencode;
+namespace Tracker.Filesys.Bencode;
 
 public class ByteStringDataType : DataTypeBase<string>
 {
-	public ByteStringDataType(string value)
+    public ByteStringDataType(string value)
         : base(value)
     {
     }
 
-	public ByteStringDataType()
+    public ByteStringDataType()
     {
     }
 
@@ -25,7 +25,7 @@ public class ByteStringDataType : DataTypeBase<string>
     {
         throw new NotImplementedException();
     }
-    
+
     public override int DataSize
     {
         get
@@ -54,7 +54,7 @@ public class ByteStringDataType : DataTypeBase<string>
                 _data = TextEncoding.GetBytes(_value);
         }
     }
-    
+
     public override Encoding TextEncoding
     {
         get => base.TextEncoding;

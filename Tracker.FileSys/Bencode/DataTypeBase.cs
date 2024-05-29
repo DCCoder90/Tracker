@@ -1,16 +1,12 @@
 using System.Text;
 
-namespace Tracker.TorrentFile.Bencode;
+namespace Tracker.Filesys.Bencode;
 
 public abstract class DataTypeBase
 {
     protected byte[] _data;
 
     private Encoding _textEncoding;
-
-    public DataTypeBase()
-    {
-    }
 
     public long DataStartPosition { get; internal set; }
 

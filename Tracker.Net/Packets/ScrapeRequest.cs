@@ -4,8 +4,8 @@ namespace Tracker.Data.Packets;
 
 public class ScrapeRequest : Packet
 {
-    public UInt64 ConnectionID;
-    public List<byte[]> InfoHashes = new List<byte[]>();
+    public ulong ConnectionID;
+    public List<byte[]> InfoHashes = new();
 
 
     public ScrapeRequest(byte[] data)
@@ -14,10 +14,10 @@ public class ScrapeRequest : Packet
         Action = (Action)Unpack.UInt32(data, 8);
         TransactionID = Unpack.UInt32(data, 12);
 
-        int totalHashes = (data.Length - 16) / 20;
-        for(int i = 0; i < totalHashes; i += 1)
+        var totalHashes = (data.Length - 16) / 20;
+        for (var i = 0; i < totalHashes; i += 1)
         {
-            byte[] hash = UtilityFunctions.GetBytes(data, 16 + (i * 20), 20);
+            var hash = data.GetBytes(16 + i * 20, 20);
             InfoHashes.Add(hash);
         }
     }
