@@ -1,4 +1,5 @@
 using Raven.Client.Documents;
+using Raven.Client.Documents.Session;
 using Tracker.Data;
 using Tracker.Data.Repository;
 using Tracker.Data.Torrent;
@@ -90,11 +91,9 @@ public class RavenRepository : IRepository
         
         var peers = session.Query<Peer>().ToList();
 
-        foreach (var peer in peers)
+        foreach (var peer in from peer in peers let diff = DateTimeOffset.Now - peer.Created where diff > tilStale select peer)
         {
-            var diff = DateTimeOffset.Now - peer.Created;
-            if(diff > tilStale)
-                session.Delete(peer);
+            session.Delete(peer);
         }
         
         session.SaveChanges();
