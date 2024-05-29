@@ -12,17 +12,19 @@ namespace Tracker.Service;
 
 public class Worker : BackgroundService
 {
-    private readonly uint _announceInterval = 60;
-    private readonly int _maxAttempts = 8; //Set by spec
+    private readonly int _announceInterval;
+    private readonly int _maxAttempts;
     private readonly ILogger<Worker> _logger;
     private readonly IRepository _repository;
     private readonly UdpClient _udpClient;
     private ServiceState _state;
 
-    public Worker(IRepository repository, ILogger<Worker> logger)
+    public Worker(IRepository repository, ILogger<Worker> logger, WorkerOptions options)
     {
-        var port = 55551;
-        var localEndpoint = new IPEndPoint(IPAddress.Any, port);
+        _announceInterval = options.AnnounceInterval;
+        _maxAttempts = options.MaxAttempts;
+        
+        var localEndpoint = new IPEndPoint(IPAddress.Any, options.Port);
         _udpClient = new UdpClient(localEndpoint);
         _repository = repository;
 
@@ -99,7 +101,7 @@ public class Worker : BackgroundService
                     var torrentInfo = _repository.ScrapeHashes(new List<byte[]> { announceRequest.InfoHash });
                     var seeders = torrentInfo.First().Seeders;
                     var leechers = torrentInfo.First().Leechers;
-                    var announceResponse = new AnnounceResponse(announceRequest.TransactionID, _announceInterval,
+                    var announceResponse = new AnnounceResponse(announceRequest.TransactionID, (uint)_announceInterval,
                         leechers, seeders, peers);
                     await SendDataAsync(_udpClient, announceResponse.Data, res.RemoteEndPoint);
                     break;
