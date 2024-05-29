@@ -1,10 +1,8 @@
-using System.Security.Cryptography;
 using System.Text;
-using Moq;
 using Shouldly;
-using Tracker.TorrentFile.Torrent;
+using Tracker.Filesys.Torrent;
 
-namespace Tracker.TorrentFile.Tests;
+namespace Tracker.FileSys.Tests;
 
 [TestFixture]
 public class TorrentFileTests
@@ -12,7 +10,7 @@ public class TorrentFileTests
     [Test]
     public void TorrentFile_DefaultConstructor_InitializesCorrectly()
     {
-        var torrentFile = new Torrent.TorrentFile();
+        var torrentFile = new TorrentFile();
 
         torrentFile.AnnounceList.ShouldNotBeNull();
         torrentFile.MetaInfo.ShouldNotBeNull();
@@ -32,7 +30,7 @@ public class TorrentFileTests
     {
         var path = "Test.torrent";
 
-        var torrentFile = new Torrent.TorrentFile(path);
+        var torrentFile = new TorrentFile(path);
         var fileNames = torrentFile.MetaInfo.Files.Select(x => x.Name).ToList();
 
         torrentFile.Path.ShouldBe(path);
@@ -45,11 +43,11 @@ public class TorrentFileTests
     [Test]
     public void Name_Property_GetSetCorrectly()
     {
-        var torrentFile = new Torrent.TorrentFile();
+        var torrentFile = new TorrentFile();
         var name = "TestName";
 
         torrentFile.Name = name;
-        
+
         torrentFile.Name.ShouldBe(name);
         torrentFile.MetaInfo.Name.ShouldBe(name);
     }

@@ -16,7 +16,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tracker.Backing.Redis", "Tr
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tracker.FileSys", "Tracker.FileSys\Tracker.FileSys.csproj", "{7A406B30-B82F-4761-89D5-FBB91F8799C0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tracker.TorrentFile.Tests", "Tracker.TorrentFile.Tests\Tracker.TorrentFile.Tests.csproj", "{B270A9CD-D92E-43CE-A3D8-9789C81C5AB8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tracker.FileSys.Tests", "Tracker.FileSys.Tests\Tracker.FileSys.Tests.csproj", "{B270A9CD-D92E-43CE-A3D8-9789C81C5AB8}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{8C46E165-3C50-41B4-BBF0-AC504AC46ED9}"
 EndProject

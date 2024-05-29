@@ -3,16 +3,16 @@ using Tracker.Data.Util;
 
 namespace Tracker.Data.Packets;
 
-public class AnnounceResponse:Packet
+public class AnnounceResponse : Packet
 {
     public byte[] Data;
 
-    public UInt32 Interval;
-    public UInt32 Leechers;
-    public UInt32 Seeders;
+    public uint Interval;
     public List<TorrentPeer> IPPairs;
+    public uint Leechers;
+    public uint Seeders;
 
-    public AnnounceResponse(UInt32 transaction, UInt32 interval, UInt32 leechers, UInt32 seeders, List<TorrentPeer> ips)
+    public AnnounceResponse(uint transaction, uint interval, uint leechers, uint seeders, List<TorrentPeer> ips)
     {
         Action = Action.Announce;
         TransactionID = transaction;
@@ -22,17 +22,13 @@ public class AnnounceResponse:Packet
         Seeders = seeders;
         IPPairs = ips;
 
-        byte[] IPBytes = IPPairs.SelectMany(byteArr => byteArr.GetFormattedPair()).ToArray();
+        var IPBytes = IPPairs.SelectMany(byteArr => byteArr.GetFormattedPair()).ToArray();
 
-        Data = Pack.UInt32((uint)Action).
-            Concat(Pack.UInt32(TransactionID)).
-            Concat(Pack.UInt32(Interval)).
-            Concat(Pack.UInt32(Leechers)).
-            Concat(Pack.UInt32(Seeders)).
-            Concat(IPBytes).ToArray();
+        Data = Pack.UInt32((uint)Action).Concat(Pack.UInt32(TransactionID)).Concat(Pack.UInt32(Interval))
+            .Concat(Pack.UInt32(Leechers)).Concat(Pack.UInt32(Seeders)).Concat(IPBytes).ToArray();
     }
 
-    public AnnounceResponse(UInt32 transaction, UInt32 interval, UInt32 leechers, UInt32 seeders, TorrentPeer ip)
+    public AnnounceResponse(uint transaction, uint interval, uint leechers, uint seeders, TorrentPeer ip)
     {
         Action = Action.Announce;
         TransactionID = transaction;
@@ -40,15 +36,11 @@ public class AnnounceResponse:Packet
         Interval = interval;
         Leechers = leechers;
         Seeders = seeders;
-        IPPairs = new List<TorrentPeer>() { ip };
+        IPPairs = new List<TorrentPeer> { ip };
 
-        byte[] IPBytes = IPPairs.SelectMany(byteArr => byteArr.GetFormattedPair()).ToArray();
+        var IPBytes = IPPairs.SelectMany(byteArr => byteArr.GetFormattedPair()).ToArray();
 
-        Data = Pack.UInt32((uint)Action).
-            Concat(Pack.UInt32(TransactionID)).
-            Concat(Pack.UInt32(Interval)).
-            Concat(Pack.UInt32(Leechers)).
-            Concat(Pack.UInt32(Seeders)).
-            Concat(IPBytes).ToArray();
+        Data = Pack.UInt32((uint)Action).Concat(Pack.UInt32(TransactionID)).Concat(Pack.UInt32(Interval))
+            .Concat(Pack.UInt32(Leechers)).Concat(Pack.UInt32(Seeders)).Concat(IPBytes).ToArray();
     }
 }

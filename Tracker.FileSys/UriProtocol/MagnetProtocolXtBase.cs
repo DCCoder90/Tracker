@@ -1,11 +1,11 @@
 ﻿using System.ComponentModel;
 
-namespace Tracker.TorrentFile.UriProtocol;
+namespace Tracker.Filesys.UriProtocol;
 
 public abstract class MagnetProtocolXtBase : INotifyPropertyChanged
 {
     private MagnetProtocolXtType _type;
-    
+
     protected MagnetProtocolXtBase(MagnetProtocolXtType type)
     {
         Type = type;

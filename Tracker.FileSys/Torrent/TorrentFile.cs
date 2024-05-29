@@ -1,8 +1,8 @@
 using System.Security.Cryptography;
 using System.Text;
-using Tracker.TorrentFile.Bencode;
+using Tracker.Filesys.Bencode;
 
-namespace Tracker.TorrentFile.Torrent;
+namespace Tracker.Filesys.Torrent;
 
 public class TorrentFile
 {
@@ -11,6 +11,7 @@ public class TorrentFile
         AnnounceList = new List<string>();
         Encoding = Encoding.UTF8;
         MetaInfo = new MetaInfo();
+        Path = string.Empty;
     }
 
     public TorrentFile(string path, LoadFlag flag = LoadFlag.None)

@@ -1,8 +1,8 @@
 using System.Text;
 using Shouldly;
-using Tracker.TorrentFile.Bencode;
+using Tracker.Filesys.Bencode;
 
-namespace Tracker.TorrentFile.Tests;
+namespace Tracker.FileSys.Tests;
 
 [TestFixture]
 public class UtilityTests
@@ -47,7 +47,7 @@ public class UtilityTests
         var entry = dict.First();
         var actualValue = (IntegerDataType)entry.Value;
 
-        
+
         dict.Count().ShouldBe(1);
         entry.Key.ShouldBe(key);
         actualValue.Value.ShouldBe(value);

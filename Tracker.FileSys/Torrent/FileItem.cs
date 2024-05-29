@@ -1,7 +1,7 @@
 using System.Text;
-using Tracker.TorrentFile.Bencode;
+using Tracker.Filesys.Bencode;
 
-namespace Tracker.TorrentFile.Torrent;
+namespace Tracker.Filesys.Torrent;
 
 public class FileItem
 {

@@ -6,13 +6,12 @@ internal class DocumentStoreHolder
 {
     // Use Lazy<IDocumentStore> to initialize the document store lazily. 
     // This ensures that it is created only once - when first accessing the public `Store` property.
-    private static IDocumentStore store = CreateStore();
 
-    public static IDocumentStore Store => store;
-    
+    public static IDocumentStore Store { get; } = CreateStore();
+
     private static IDocumentStore CreateStore()
     {
-        IDocumentStore store = new DocumentStore()
+        var store = new DocumentStore
         {
             // Define the cluster node URLs (required)
             Urls = new[] { "http://127.0.0.1:8080" },
@@ -25,7 +24,7 @@ internal class DocumentStoreHolder
             },
 
             // Define a default database (optional)
-            Database = "test",
+            Database = "test"
 
             // Define a client certificate (optional)
             //Certificate = new X509Certificate2("C:\\path_to_your_pfx_file\\cert.pfx"),

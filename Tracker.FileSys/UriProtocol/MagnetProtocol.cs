@@ -2,7 +2,7 @@
 using System.Text.RegularExpressions;
 using System.Web;
 
-namespace Tracker.TorrentFile.UriProtocol;
+namespace Tracker.Filesys.UriProtocol;
 
 public class MagnetProtocol : ProtocolBase
 {

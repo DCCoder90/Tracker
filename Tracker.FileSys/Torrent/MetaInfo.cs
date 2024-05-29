@@ -1,6 +1,6 @@
-using Tracker.TorrentFile.Bencode;
+using Tracker.Filesys.Bencode;
 
-namespace Tracker.TorrentFile.Torrent;
+namespace Tracker.Filesys.Torrent;
 
 public class MetaInfo
 {
@@ -10,7 +10,7 @@ public class MetaInfo
     {
         Files = new List<FileItem>();
     }
-    
+
     public long Length
     {
         get
@@ -85,6 +85,6 @@ public class MetaInfo
     }
 
     public DictionaryDataType OriginalDataFragment { get; internal set; }
-    
+
     public byte[] OriginalDataFragmentBuffer { get; internal set; }
 }

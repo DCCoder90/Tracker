@@ -7,6 +7,7 @@ public class TorrentPeer
 {
     public byte[] IP;
     public ushort Port;
+
     public TorrentPeer(uint ip, ushort port)
     {
         IP = Pack.UInt32(ip);
@@ -35,23 +36,23 @@ public class TorrentPeer
     {
         var parts = redisResponse.Split(':');
         IP = IPAddress.Parse(parts[0]).GetAddressBytes();
-        Port = (ushort.Parse(parts[1]));
+        Port = ushort.Parse(parts[1]);
     }
 
     public TorrentPeer(byte[] peer)
     {
-        IP = UtilityFunctions.GetBytes(peer, 0, 4);
-        Port = Unpack.UInt16(peer,4);
+        IP = peer.GetBytes(0, 4);
+        Port = Unpack.UInt16(peer, 4);
     }
 
     public string StringPeer()
     {
-        return GetIPString() + ":" + Port.ToString();
+        return GetIPString() + ":" + Port;
     }
 
     public byte[] GetFormattedPair()
     {
-        return UtilityFunctions.Cat(IP, Pack.UInt16(Port));
+        return IP.Cat(Pack.UInt16(Port));
     }
 
     public string GetIPString()

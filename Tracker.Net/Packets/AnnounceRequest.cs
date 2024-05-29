@@ -4,17 +4,17 @@ namespace Tracker.Data.Packets;
 
 public class AnnounceRequest : Packet
 {
-    public UInt64 ConnectionID;
+    public ulong ConnectionID;
+    public ulong Downloaded;
     public byte[] InfoHash = new byte[20];
+    public uint IpAddress;
+    public ulong Key;
+    public ulong Left;
+    public uint NumWanted;
     public byte[] PeerID = new byte[20];
-    public UInt64 Downloaded;
-    public UInt64 Left;
-    public UInt64 Uploaded;
-    public UInt32 TorrentEvent;
-    public UInt32 IpAddress;
-    public UInt64 Key;
-    public UInt32 NumWanted;
-    public UInt16 Port;
+    public ushort Port;
+    public uint TorrentEvent;
+    public ulong Uploaded;
 
 
     public AnnounceRequest(byte[] data)
@@ -23,9 +23,9 @@ public class AnnounceRequest : Packet
 
         Action = (Action)Unpack.UInt32(data, 8);
         TransactionID = Unpack.UInt32(data, 12);
-                
-        InfoHash = UtilityFunctions.GetBytes(data, 16, 20);
-        PeerID = UtilityFunctions.GetBytes(data, 36, 20);
+
+        InfoHash = data.GetBytes(16, 20);
+        PeerID = data.GetBytes(36, 20);
         Downloaded = Unpack.UInt64(data, 56);
         Left = Unpack.UInt64(data, 64);
         Uploaded = Unpack.UInt64(data, 72);
