@@ -6,8 +6,9 @@ public interface IRepository
 {
     string BackingType { get; }
     void ResetHash(string hash);
-    void AddPeer(TorrentPeer peer, uint transactionId, byte[] hash, PeerType type = PeerType.Seeder);
-    void RemovePeer(TorrentPeer peer, uint transactionId, byte[] hash, PeerType type = PeerType.Seeder);
+    void AddPeer(TorrentPeer peer, ulong connectionId, byte[] hash, PeerType type = PeerType.Seeder);
+    void RemovePeer(TorrentPeer peer, ulong connectionId, byte[] hash, PeerType type = PeerType.Seeder);
     List<TorrentPeer> GetPeers(byte[] hash);
     List<TorrentInfo> ScrapeHashes(List<byte[]> hashes);
+    void ClearStale(TimeSpan tilStale);
 }
