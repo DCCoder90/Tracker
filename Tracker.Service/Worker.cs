@@ -13,6 +13,7 @@ namespace Tracker.Service;
 public class Worker : BackgroundService
 {
     private readonly uint _announceInterval = 60;
+    private readonly int _maxAttempts = 8; //Set by spec
     private readonly ILogger<Worker> _logger;
     private readonly IRepository _repository;
     private readonly UdpClient _udpClient;
@@ -49,6 +50,8 @@ public class Worker : BackgroundService
             var receivedResults = await _udpClient.ReceiveAsync(stoppingToken);
             if (receivedResults.Buffer.Length > 0)
                 await ReceivedData(receivedResults);
+            
+            _repository.ClearStale(TimeSpan.FromSeconds(_announceInterval*_maxAttempts));
         }
     }
 
@@ -82,14 +85,14 @@ public class Worker : BackgroundService
 
                     if ((Event)announceRequest.TorrentEvent == Event.Stopped)
                     {
-                        _repository.RemovePeer(peer, announceRequest.TransactionID, announceRequest.InfoHash);
+                        _repository.RemovePeer(peer, announceRequest.ConnectionID, announceRequest.InfoHash);
                     }
                     else
                     {
                         var type = announceRequest.Left > 0 ? PeerType.Leecher : PeerType.Seeder;
                         if ((Event)announceRequest.TorrentEvent == Event.Unknown)
                             type = PeerType.Seeder;
-                        _repository.AddPeer(peer, announceRequest.TransactionID, announceRequest.InfoHash, type);
+                        _repository.AddPeer(peer, announceRequest.ConnectionID, announceRequest.InfoHash,type);
                     }
 
                     var peers = _repository.GetPeers(announceRequest.InfoHash);
