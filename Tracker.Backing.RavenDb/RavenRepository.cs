@@ -29,6 +29,9 @@ public class RavenRepository : IRepository
 
     public void AddPeer(TorrentPeer peer, ulong connectionId, byte[] hash, PeerType type = PeerType.Seeder)
     {
+        if (UpdatePeer(Unpack.Hex(hash), connectionId))
+            return;
+        
         using var session = _store.OpenSession();
         var storedPeer = new Peer
         {
@@ -43,6 +46,27 @@ public class RavenRepository : IRepository
         session.SaveChanges();
     }
 
+    /// <summary>
+    /// Update peer timestamp if it exists
+    /// </summary>
+    /// <param name="hashString"></param>
+    /// <param name="connectionId"></param>
+    /// <returns></returns>
+    private bool UpdatePeer(string hashString, ulong connectionId)
+    {
+        using var session = _store.OpenSession();
+        var peerToUpdate = session.Query<Peer>()
+            .SingleOrDefault(x => x.Hash == hashString && x.ConnectionId == connectionId);
+        if (peerToUpdate != null)
+        {
+            peerToUpdate.Created = DateTimeOffset.Now;
+            session.SaveChanges();
+            return true;
+        }
+
+        return false;
+    }
+    
     public void RemovePeer(TorrentPeer peer, ulong connectionId, byte[] hash, PeerType type = PeerType.Seeder)
     {
         using var session = _store.OpenSession();
