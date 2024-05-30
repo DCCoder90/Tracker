@@ -13,7 +13,8 @@ public interface IServiceRepository
     /// Set seeder and leecher count to 0 for torrent
     /// </summary>
     /// <param name="hash"></param>
-    void ResetHash(string hash);
+    /// <param name="cancellationToken"></param>
+    Task ResetHash(string hash, CancellationToken cancellationToken = new ());
     
     /// <summary>
     /// Add new peer for torrent
@@ -22,7 +23,8 @@ public interface IServiceRepository
     /// <param name="connectionId"></param>
     /// <param name="hash"></param>
     /// <param name="type"></param>
-    void AddPeer(TorrentPeer peer, ulong connectionId, byte[] hash, PeerType type = PeerType.Seeder);
+    /// <param name="cancellationToken"></param>
+    Task AddPeer(TorrentPeer peer, ulong connectionId, byte[] hash, PeerType type = PeerType.Seeder, CancellationToken cancellationToken = new ());
     
     /// <summary>
     /// Remove peer from torrent
@@ -31,25 +33,29 @@ public interface IServiceRepository
     /// <param name="connectionId"></param>
     /// <param name="hash"></param>
     /// <param name="type"></param>
-    void RemovePeer(TorrentPeer peer, ulong connectionId, byte[] hash, PeerType type = PeerType.Seeder);
+    /// <param name="cancellationToken"></param>
+    Task RemovePeer(TorrentPeer peer, ulong connectionId, byte[] hash, PeerType type = PeerType.Seeder, CancellationToken cancellationToken = new ());
     
     /// <summary>
     /// Retrieve a list of peers for given hash
     /// </summary>
     /// <param name="hash">Torrent hash</param>
+    /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    List<TorrentPeer> GetPeers(byte[] hash);
+    Task<List<TorrentPeer>> GetPeers(byte[] hash, CancellationToken cancellationToken = new ());
     
     /// <summary>
     /// Retrieve details of torrent for list of hashes
     /// </summary>
     /// <param name="hashes">List of torrent hashes</param>
+    /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    List<TorrentInfo> ScrapeHashes(List<byte[]> hashes);
+    Task<List<TorrentInfo>> ScrapeHashes(List<byte[]> hashes, CancellationToken cancellationToken = new ());
     
     /// <summary>
     /// Remove stale peers from backing
     /// </summary>
     /// <param name="tilStale"></param>
-    void ClearStale(TimeSpan tilStale);
+    /// <param name="cancellationToken"></param>
+    Task ClearStale(TimeSpan tilStale, CancellationToken cancellationToken = new ());
 }

@@ -51,13 +51,13 @@ public class Worker : BackgroundService
 
             var receivedResults = await _udpClient.ReceiveAsync(stoppingToken);
             if (receivedResults.Buffer.Length > 0)
-                await ReceivedData(receivedResults);
+                await ReceivedData(receivedResults, stoppingToken);
             
             _serviceRepository.ClearStale(TimeSpan.FromSeconds(_announceInterval*_maxAttempts));
         }
     }
 
-    private async Task ReceivedData(UdpReceiveResult res)
+    private async Task ReceivedData(UdpReceiveResult res, CancellationToken cancellationToken)
     {
         _logger.LogInformation("Received information");
         var receivedData = res.Buffer;
@@ -87,7 +87,7 @@ public class Worker : BackgroundService
 
                     if ((Event)announceRequest.TorrentEvent == Event.Stopped)
                     {
-                        _serviceRepository.RemovePeer(peer, announceRequest.ConnectionID, announceRequest.InfoHash);
+                        await _serviceRepository.RemovePeer(peer, announceRequest.ConnectionID, announceRequest.InfoHash);
                     }
                     else
                     {
@@ -97,8 +97,8 @@ public class Worker : BackgroundService
                         _serviceRepository.AddPeer(peer, announceRequest.ConnectionID, announceRequest.InfoHash,type);
                     }
 
-                    var peers = _serviceRepository.GetPeers(announceRequest.InfoHash);
-                    var torrentInfo = _serviceRepository.ScrapeHashes(new List<byte[]> { announceRequest.InfoHash });
+                    var peers = await _serviceRepository.GetPeers(announceRequest.InfoHash);
+                    var torrentInfo = await _serviceRepository.ScrapeHashes(new List<byte[]> { announceRequest.InfoHash });
                     var seeders = torrentInfo.First().Seeders;
                     var leechers = torrentInfo.First().Leechers;
                     var announceResponse = new AnnounceResponse(announceRequest.TransactionID, (uint)_announceInterval,
@@ -112,7 +112,7 @@ public class Worker : BackgroundService
                     _logger.LogInformation(
                         $"[Scrape] from {addressString} for {scrapeRequest.InfoHashes.Count} torrents");
 
-                    var scrapedTorrents = _serviceRepository.ScrapeHashes(scrapeRequest.InfoHashes);
+                    var scrapedTorrents = await _serviceRepository.ScrapeHashes(scrapeRequest.InfoHashes);
                     var scrapeResponse = new ScrapeResponse(scrapeRequest.TransactionID, scrapedTorrents);
 
                     await SendDataAsync(_udpClient, scrapeResponse.Data, res.RemoteEndPoint);

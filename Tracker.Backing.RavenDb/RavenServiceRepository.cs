@@ -18,21 +18,21 @@ public class RavenServiceRepository : IServiceRepository
 
     public string BackingType => "RavenDB";
 
-    public void ResetHash(string hash)
+    public async Task ResetHash(string hash, CancellationToken cancellationToken = new ())
     {
-        using var session = _store.OpenSession();
-        var item = session.Load<Torrent>(hash);
+        using var session = _store.OpenAsyncSession();
+        var item = await session.LoadAsync<Torrent>(hash, cancellationToken);
         item.Seeders = 0;
         item.Leechers = 0;
-        session.SaveChanges();
+        await session.SaveChangesAsync(cancellationToken);
     }
 
-    public void AddPeer(TorrentPeer peer, ulong connectionId, byte[] hash, PeerType type = PeerType.Seeder)
+    public async Task AddPeer(TorrentPeer peer, ulong connectionId, byte[] hash, PeerType type = PeerType.Seeder, CancellationToken cancellationToken = new ())
     {
-        if (UpdatePeer(Unpack.Hex(hash), connectionId))
+        if (await UpdatePeer(Unpack.Hex(hash), connectionId, cancellationToken))
             return;
         
-        using var session = _store.OpenSession();
+        using var session = _store.OpenAsyncSession();
         var storedPeer = new Peer
         {
             Hash = Unpack.Hex(hash),
@@ -42,8 +42,8 @@ public class RavenServiceRepository : IServiceRepository
             ConnectionId = connectionId,
             Created = DateTimeOffset.Now
         };
-        session.Store(storedPeer);
-        session.SaveChanges();
+        await session.StoreAsync(storedPeer,cancellationToken);
+        await session.SaveChangesAsync(cancellationToken);
     }
 
     /// <summary>
@@ -52,24 +52,24 @@ public class RavenServiceRepository : IServiceRepository
     /// <param name="hashString"></param>
     /// <param name="connectionId"></param>
     /// <returns></returns>
-    private bool UpdatePeer(string hashString, ulong connectionId)
+    private async Task<bool> UpdatePeer(string hashString, ulong connectionId, CancellationToken cancellationToken = new ())
     {
-        using var session = _store.OpenSession();
+        using var session = _store.OpenAsyncSession();
         var peerToUpdate = session.Query<Peer>()
             .SingleOrDefault(x => x.Hash == hashString && x.ConnectionId == connectionId);
         if (peerToUpdate != null)
         {
             peerToUpdate.Created = DateTimeOffset.Now;
-            session.SaveChanges();
+            await session.SaveChangesAsync(cancellationToken);
             return true;
         }
 
         return false;
     }
     
-    public void RemovePeer(TorrentPeer peer, ulong connectionId, byte[] hash, PeerType type = PeerType.Seeder)
+    public async Task RemovePeer(TorrentPeer peer, ulong connectionId, byte[] hash, PeerType type = PeerType.Seeder, CancellationToken cancellationToken = new ())
     {
-        using var session = _store.OpenSession();
+        using var session = _store.OpenAsyncSession();
         var hashString = Unpack.Hex(hash);
 
         var peerToDelete = session.Query<Peer>()
@@ -79,27 +79,27 @@ public class RavenServiceRepository : IServiceRepository
             return;
         
         session.Delete(peerToDelete);
-        session.SaveChanges();
+        await session.SaveChangesAsync(cancellationToken);
     }
 
-    public List<TorrentPeer> GetPeers(byte[] hash)
+    public async Task<List<TorrentPeer>> GetPeers(byte[] hash, CancellationToken cancellationToken = new ())
     {
-        using var session = _store.OpenSession();
+        using var session = _store.OpenAsyncSession();
         var hashString = Unpack.Hex(hash);
-        var peers = session.Query<Peer>().Where(x => x.Hash == hashString).ToList();
+        var peers = await session.Query<Peer>().Where(x => x.Hash == hashString).ToListAsync();
 
         return peers.Select(peer => new TorrentPeer(peer.IP, peer.Port)).ToList();
     }
 
-    public List<TorrentInfo> ScrapeHashes(List<byte[]> hashes)
+    public async Task<List<TorrentInfo>> ScrapeHashes(List<byte[]> hashes, CancellationToken cancellationToken = new ())
     {
-        using var session = _store.OpenSession();
+        using var session = _store.OpenAsyncSession();
 
         var torrentList = new List<TorrentInfo>();
         foreach (var hash in hashes)
         {
             var hashString = Unpack.Hex(hash);
-            var peers = session.Query<Peer>().Where(x => x.Hash == hashString).ToList();
+            var peers = await session.Query<Peer>().Where(x => x.Hash == hashString).ToListAsync(cancellationToken);
 
             torrentList.Add(new TorrentInfo(hash, (uint)peers.Count(x => x.PeerType == PeerType.Seeder),
                 (uint)peers.Count(x => x.PeerType == PeerType.Seeder),
@@ -109,17 +109,17 @@ public class RavenServiceRepository : IServiceRepository
         return torrentList;
     }
 
-    public void ClearStale(TimeSpan tilStale)
+    public async Task ClearStale(TimeSpan tilStale, CancellationToken cancellationToken = new ())
     {
-        using IDocumentSession session = _store.OpenSession();
+        using var session = _store.OpenAsyncSession();
         
-        var peers = session.Query<Peer>().ToList();
+        var peers = await session.Query<Peer>().ToListAsync(cancellationToken);
 
         foreach (var peer in from peer in peers let diff = DateTimeOffset.Now - peer.Created where diff > tilStale select peer)
         {
             session.Delete(peer);
         }
         
-        session.SaveChanges();
+        await session.SaveChangesAsync(cancellationToken);
     }
 }

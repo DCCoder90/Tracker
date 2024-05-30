@@ -8,7 +8,7 @@ namespace Tracker.Redis;
 
 public class RedisServiceRepository : IServiceRepository
 {
-    private readonly ConnectionMultiplexer _backing;
+    private readonly IConnectionMultiplexer _backing;
 
     public RedisServiceRepository()
     {
@@ -26,35 +26,34 @@ public class RedisServiceRepository : IServiceRepository
 
     public string BackingType => "Redis";
 
-    public void ResetHash(string hash)
+    public async Task ResetHash(string hash, CancellationToken cancellationToken = new ())
     {
         var db = _backing.GetDatabase();
-        var nullCheck = db.StringGet("s:" + hash);
+        var nullCheck = await db.StringGetAsync("s:" + hash);
         if (nullCheck.IsNullOrEmpty)
         {
-            db.StringSet("s:" + hash, "0");
-            db.StringSet("l:" + hash, "0");
+            await db.StringSetAsync("s:" + hash, "0");
+            await db.StringSetAsync("l:" + hash, "0");
         }
     }
 
-    //TODO: Implement transactionId
-    public void AddPeer(TorrentPeer peer, ulong connectionId, byte[] hash, PeerType type = PeerType.Seeder)
+    public async Task AddPeer(TorrentPeer peer, ulong connectionId, byte[] hash, PeerType type = PeerType.Seeder, CancellationToken cancellationToken = new ())
     {
         var db = _backing.GetDatabase();
         var insert = peer.StringPeer();
         var stringHash = Unpack.Hex(hash);
 
-        db.SetAdd("t:" + stringHash, insert);
+        await db.SetAddAsync($"t:{stringHash}", insert);
 
 
         if (type == PeerType.Seeder)
-            db.StringIncrement("s:" + stringHash); //amount of seeders
+            await db.StringIncrementAsync($"s:{stringHash}"); //amount of seeders
         else
-            db.StringIncrement("l:" + stringHash); //amount of leechers
+            await db.StringIncrementAsync($"l:{stringHash}"); //amount of leechers
     }
 
     //TODO: Implement transactionId
-    public void RemovePeer(TorrentPeer peer, ulong connectionId, byte[] hash, PeerType type = PeerType.Seeder)
+    public async Task RemovePeer(TorrentPeer peer, ulong connectionId, byte[] hash, PeerType type = PeerType.Seeder, CancellationToken cancellationToken = new ())
     {
         var db = _backing.GetDatabase();
         var insert = peer.StringPeer();
@@ -63,16 +62,16 @@ public class RedisServiceRepository : IServiceRepository
         db.SetRemove("t:" + Unpack.Hex(hash), insert);
 
         if (type == PeerType.Seeder)
-            db.StringDecrement("s:" + Unpack.Hex(hash));
+            await db.StringDecrementAsync($"s:{stringHash}");
         else
-            db.StringDecrement("l:" + Unpack.Hex(hash));
+            await db.StringDecrementAsync($"l:{stringHash}");
     }
 
-    public List<TorrentPeer> GetPeers(byte[] hash)
+    public async Task<List<TorrentPeer>> GetPeers(byte[] hash, CancellationToken cancellationToken = new ())
     {
         var peers = new List<TorrentPeer>();
         var db = _backing.GetDatabase();
-        var value = db.SetMembers("t:" + Unpack.Hex(hash));
+        var value = await db.SetMembersAsync($"t:{Unpack.Hex(hash)}");
 
         foreach (var peer in value)
             if (peer.HasValue)
@@ -84,15 +83,15 @@ public class RedisServiceRepository : IServiceRepository
         return peers;
     }
 
-    public List<TorrentInfo> ScrapeHashes(List<byte[]> hashes)
+    public async Task<List<TorrentInfo>> ScrapeHashes(List<byte[]> hashes, CancellationToken cancellationToken = new ())
     {
         var list = new List<TorrentInfo>();
         var db = _backing.GetDatabase();
         foreach (var hash in hashes)
         {
             var hashString = BitConverter.ToString(hash).Replace("-", string.Empty);
-            var seeders = db.StringGet($"s:{hashString}");
-            var leechers = db.StringGet($"l:{hashString}");
+            var seeders = await db.StringGetAsync($"s:{hashString}");
+            var leechers = await db.StringGetAsync($"l:{hashString}");
 
             if (seeders.IsNullOrEmpty)
                 seeders = 0;
@@ -106,7 +105,7 @@ public class RedisServiceRepository : IServiceRepository
         return list;
     }
 
-    public void ClearStale(TimeSpan tilStale)
+    public async Task ClearStale(TimeSpan tilStale, CancellationToken cancellationToken = new ())
     {
         throw new NotImplementedException();
     }
