@@ -15,18 +15,18 @@ public class Worker : BackgroundService
     private readonly int _announceInterval;
     private readonly int _maxAttempts;
     private readonly ILogger<Worker> _logger;
-    private readonly IRepository _repository;
+    private readonly IServiceRepository _serviceRepository;
     private readonly UdpClient _udpClient;
     private ServiceState _state;
 
-    public Worker(IRepository repository, ILogger<Worker> logger, WorkerOptions options)
+    public Worker(IServiceRepository serviceRepository, ILogger<Worker> logger, WorkerOptions options)
     {
         _announceInterval = options.AnnounceInterval;
         _maxAttempts = options.MaxAttempts;
         
         var localEndpoint = new IPEndPoint(IPAddress.Any, options.Port);
         _udpClient = new UdpClient(localEndpoint);
-        _repository = repository;
+        _serviceRepository = serviceRepository;
 
         _logger = logger;
 
@@ -53,7 +53,7 @@ public class Worker : BackgroundService
             if (receivedResults.Buffer.Length > 0)
                 await ReceivedData(receivedResults);
             
-            _repository.ClearStale(TimeSpan.FromSeconds(_announceInterval*_maxAttempts));
+            _serviceRepository.ClearStale(TimeSpan.FromSeconds(_announceInterval*_maxAttempts));
         }
     }
 
@@ -87,18 +87,18 @@ public class Worker : BackgroundService
 
                     if ((Event)announceRequest.TorrentEvent == Event.Stopped)
                     {
-                        _repository.RemovePeer(peer, announceRequest.ConnectionID, announceRequest.InfoHash);
+                        _serviceRepository.RemovePeer(peer, announceRequest.ConnectionID, announceRequest.InfoHash);
                     }
                     else
                     {
                         var type = announceRequest.Left > 0 ? PeerType.Leecher : PeerType.Seeder;
                         if ((Event)announceRequest.TorrentEvent == Event.Unknown)
                             type = PeerType.Seeder;
-                        _repository.AddPeer(peer, announceRequest.ConnectionID, announceRequest.InfoHash,type);
+                        _serviceRepository.AddPeer(peer, announceRequest.ConnectionID, announceRequest.InfoHash,type);
                     }
 
-                    var peers = _repository.GetPeers(announceRequest.InfoHash);
-                    var torrentInfo = _repository.ScrapeHashes(new List<byte[]> { announceRequest.InfoHash });
+                    var peers = _serviceRepository.GetPeers(announceRequest.InfoHash);
+                    var torrentInfo = _serviceRepository.ScrapeHashes(new List<byte[]> { announceRequest.InfoHash });
                     var seeders = torrentInfo.First().Seeders;
                     var leechers = torrentInfo.First().Leechers;
                     var announceResponse = new AnnounceResponse(announceRequest.TransactionID, (uint)_announceInterval,
@@ -112,7 +112,7 @@ public class Worker : BackgroundService
                     _logger.LogInformation(
                         $"[Scrape] from {addressString} for {scrapeRequest.InfoHashes.Count} torrents");
 
-                    var scrapedTorrents = _repository.ScrapeHashes(scrapeRequest.InfoHashes);
+                    var scrapedTorrents = _serviceRepository.ScrapeHashes(scrapeRequest.InfoHashes);
                     var scrapeResponse = new ScrapeResponse(scrapeRequest.TransactionID, scrapedTorrents);
 
                     await SendDataAsync(_udpClient, scrapeResponse.Data, res.RemoteEndPoint);

@@ -6,11 +6,11 @@ using Tracker.Data.Util;
 
 namespace Tracker.Redis;
 
-public class RedisRepository : IRepository
+public class RedisServiceRepository : IServiceRepository
 {
     private readonly ConnectionMultiplexer _backing;
 
-    public RedisRepository()
+    public RedisServiceRepository()
     {
         var options = new ConfigurationOptions
         {

@@ -12,7 +12,7 @@ var host = Host.CreateDefaultBuilder(args)
 
         services.AddSingleton<BackingOptions>(backingOptions);
         services.AddSingleton(options);
-        services.AddSingleton(typeof(IRepository),typeof(RavenRepository));
+        services.AddSingleton(typeof(IServiceRepository),typeof(RavenServiceRepository));
         services.AddHostedService<Worker>();
     })
     .Build();

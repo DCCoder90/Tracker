@@ -2,7 +2,7 @@ using Tracker.Data.Torrent;
 
 namespace Tracker.Data.Repository;
 
-public interface IRepository
+public interface IServiceRepository
 {
     /// <summary>
     /// The name of the backing type

@@ -7,11 +7,11 @@ using Tracker.Data.Util;
 
 namespace Tracker.RavenDb;
 
-public class RavenRepository : IRepository
+public class RavenServiceRepository : IServiceRepository
 {
     private readonly IDocumentStore _store;
 
-    public RavenRepository(BackingOptions backingOptions)
+    public RavenServiceRepository(BackingOptions backingOptions)
     {
         _store = DocumentStoreHolder.GetStore(backingOptions);
     }
