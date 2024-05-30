@@ -10,17 +10,21 @@ public class RedisServiceRepository : IServiceRepository
 {
     private readonly IConnectionMultiplexer _backing;
 
-    public RedisServiceRepository()
+    public RedisServiceRepository(BackingOptions backingOptions)
     {
         var options = new ConfigurationOptions
         {
-            Password = "redispw",
-            User = "default",
             EndPoints = new EndPointCollection
             {
-                "localhost:34147"
+                $"{backingOptions.Host}:{backingOptions.Port}"
             }
         };
+
+        if (backingOptions.UsesAuthentication)
+        {
+            options.Password = backingOptions.Password;
+            options.User = backingOptions.User;
+        }
         _backing = ConnectionMultiplexer.Connect(options);
     }
 
@@ -37,6 +41,7 @@ public class RedisServiceRepository : IServiceRepository
         }
     }
 
+    //TODO: Implement connectionId
     public async Task AddPeer(TorrentPeer peer, ulong connectionId, byte[] hash, PeerType type = PeerType.Seeder, CancellationToken cancellationToken = new ())
     {
         var db = _backing.GetDatabase();
@@ -45,14 +50,13 @@ public class RedisServiceRepository : IServiceRepository
 
         await db.SetAddAsync($"t:{stringHash}", insert);
 
-
         if (type == PeerType.Seeder)
             await db.StringIncrementAsync($"s:{stringHash}"); //amount of seeders
         else
             await db.StringIncrementAsync($"l:{stringHash}"); //amount of leechers
     }
 
-    //TODO: Implement transactionId
+    //TODO: Implement connectionId
     public async Task RemovePeer(TorrentPeer peer, ulong connectionId, byte[] hash, PeerType type = PeerType.Seeder, CancellationToken cancellationToken = new ())
     {
         var db = _backing.GetDatabase();
