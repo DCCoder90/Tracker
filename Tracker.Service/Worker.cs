@@ -4,9 +4,9 @@ using System.Text;
 using Tracker.Net;
 using Tracker.Net.Packets;
 using Tracker.Net.Repository;
-using Tracker.Net.Torrent;
 using Tracker.Net.Util;
 using Action = Tracker.Net.Action;
+using TorrentPeer = Tracker.Net.Torrent.TorrentPeer;
 
 namespace Tracker.Service;
 

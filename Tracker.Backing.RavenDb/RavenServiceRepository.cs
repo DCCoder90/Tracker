@@ -1,9 +1,9 @@
 using Raven.Client.Documents;
-using Raven.Client.Documents.Session;
 using Tracker.Net;
 using Tracker.Net.Repository;
 using Tracker.Net.Torrent;
 using Tracker.Net.Util;
+using TorrentPeer = Tracker.Net.Torrent.TorrentPeer;
 
 namespace Tracker.RavenDb;
 
@@ -21,7 +21,7 @@ public class RavenServiceRepository : IServiceRepository
     public async Task ResetHash(string hash, CancellationToken cancellationToken = new ())
     {
         using var session = _store.OpenAsyncSession();
-        var item = await session.LoadAsync<Torrent>(hash, cancellationToken);
+        var item = await session.LoadAsync<TorrentData>(hash, cancellationToken);
         item.Seeders = 0;
         item.Leechers = 0;
         await session.SaveChangesAsync(cancellationToken);

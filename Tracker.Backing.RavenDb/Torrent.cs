@@ -1,6 +1,6 @@
 namespace Tracker.RavenDb;
 
-internal class Torrent
+internal class TorrentData
 {
     public string Hash { get; set; }
     public int Seeders { get; set; }

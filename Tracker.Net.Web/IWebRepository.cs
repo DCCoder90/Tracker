@@ -1,7 +1,4 @@
-using Tracker.Filesys.Torrent;
-using Tracker.Net.Torrent;
-
-namespace Tracker.Net.Repository;
+namespace Tracker.Net.Web;
 
 public interface IWebRepository
 {
@@ -10,7 +7,7 @@ public interface IWebRepository
     /// </summary>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    public Task<IEnumerable<TorrentInfo>> GetAllTorrents(CancellationToken cancellationToken = new());
+    public Task<IEnumerable<Torrent>> GetAllTorrents(CancellationToken cancellationToken = new());
 
     /// <summary>
     /// Add torrent file details to backing
@@ -18,7 +15,7 @@ public interface IWebRepository
     /// <param name="torrent"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    public Task AddTorrent(TorrentFile torrent, CancellationToken cancellationToken = new());
+    public Task AddTorrent(Torrent torrent, CancellationToken cancellationToken = new());
     
     /// <summary>
     /// Returns a collection of all peers for a supplied torrent hash
