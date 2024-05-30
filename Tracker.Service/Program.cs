@@ -7,9 +7,12 @@ var host = Host.CreateDefaultBuilder(args)
     {
         IConfiguration configuration = hostContext.Configuration;
         WorkerOptions options = configuration.GetSection("Config").Get<WorkerOptions>();
+        BackingOptions backingOptions = configuration.GetSection("Backing").Get<BackingOptions>();
 
+
+        services.AddSingleton<BackingOptions>(backingOptions);
         services.AddSingleton(options);
-        services.AddSingleton<IRepository>(new RavenRepository());
+        services.AddSingleton(typeof(IRepository),typeof(RavenRepository));
         services.AddHostedService<Worker>();
     })
     .Build();

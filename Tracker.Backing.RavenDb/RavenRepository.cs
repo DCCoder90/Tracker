@@ -11,9 +11,9 @@ public class RavenRepository : IRepository
 {
     private readonly IDocumentStore _store;
 
-    public RavenRepository()
+    public RavenRepository(BackingOptions backingOptions)
     {
-        _store = DocumentStoreHolder.Store;
+        _store = DocumentStoreHolder.GetStore(backingOptions);
     }
 
     public string BackingType => "RavenDB";

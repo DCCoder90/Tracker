@@ -1,20 +1,29 @@
+using System.Security.Cryptography.X509Certificates;
 using Raven.Client.Documents;
+using Tracker.Data.Repository;
 
 namespace Tracker.RavenDb;
 
 internal class DocumentStoreHolder
 {
-    // Use Lazy<IDocumentStore> to initialize the document store lazily. 
-    // This ensures that it is created only once - when first accessing the public `Store` property.
+    private static Lazy<IDocumentStore> _store;
 
-    public static IDocumentStore Store { get; } = CreateStore();
-
-    private static IDocumentStore CreateStore()
+    public static IDocumentStore GetStore(BackingOptions backingOptions)
     {
+            if (_store==null || !_store.IsValueCreated)
+                _store = new Lazy<IDocumentStore>(CreateStore(backingOptions));
+            return _store.Value;
+    }
+
+    private static IDocumentStore CreateStore(BackingOptions BackingOptions)
+    {
+        if (BackingOptions == null)
+            throw new ArgumentNullException(nameof(BackingOptions),"BackingOptions cannot be null");
+        
         var store = new DocumentStore
         {
             // Define the cluster node URLs (required)
-            Urls = new[] { "http://127.0.0.1:8080" },
+            Urls = new[] { $"{BackingOptions.Host}:{BackingOptions.Port}" },
 
             // Set conventions as necessary (optional)
             Conventions =
@@ -23,17 +32,13 @@ internal class DocumentStoreHolder
                 UseOptimisticConcurrency = true
             },
 
-            // Define a default database (optional)
-            Database = "test"
-
-            // Define a client certificate (optional)
-            //Certificate = new X509Certificate2("C:\\path_to_your_pfx_file\\cert.pfx"),
-
-            // Initialize the Document Store
+            Database = BackingOptions.Database,
+            Certificate = BackingOptions.UsesAuthentication ? new X509Certificate2(BackingOptions.CertificatePath) : null,
         }.Initialize();
 
         // When the store is disposed of, the certificate file will be removed as well
-        //Store.AfterDispose += (sender, args) => Store.Certificate.Dispose();
+        if(BackingOptions.UsesAuthentication)
+            store.AfterDispose += (sender, args) => store.Certificate.Dispose();
 
         return store;
     }
