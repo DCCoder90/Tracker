@@ -11,4 +11,8 @@
         <ProjectReference Include="..\Tracker.Net\Tracker.Net.csproj"/>
     </ItemGroup>
 
+    <ItemGroup>
+      <PackageReference Include="StackExchange.Redis" Version="2.7.33" />
+    </ItemGroup>
+
 </Project>

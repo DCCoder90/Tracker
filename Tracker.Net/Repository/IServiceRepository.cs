@@ -25,7 +25,7 @@ public interface IServiceRepository
     /// <param name="type"></param>
     /// <param name="cancellationToken"></param>
     Task AddPeer(TorrentPeer peer, ulong connectionId, byte[] hash, PeerType type = PeerType.Seeder, CancellationToken cancellationToken = new ());
-    
+
     /// <summary>
     /// Remove peer from torrent
     /// </summary>
