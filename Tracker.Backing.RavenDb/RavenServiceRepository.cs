@@ -3,6 +3,7 @@ using Tracker.Net;
 using Tracker.Net.Repository;
 using Tracker.Net.Torrent;
 using Tracker.Net.Util;
+using Tracker.RavenDb.Data;
 using TorrentPeer = Tracker.Net.Torrent.TorrentPeer;
 
 namespace Tracker.RavenDb;

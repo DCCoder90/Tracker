@@ -1,3 +1,5 @@
+using Tracker.Net.Web.Data;
+
 namespace Tracker.Net.Web;
 
 public interface IWebRepository

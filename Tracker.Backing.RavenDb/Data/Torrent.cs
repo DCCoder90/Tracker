@@ -1,4 +1,4 @@
-namespace Tracker.RavenDb;
+namespace Tracker.RavenDb.Data;
 
 internal class TorrentData
 {

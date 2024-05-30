@@ -1,7 +1,7 @@
 using Tracker.Net.Repository;
 using Tracker.Net.Web;
-using TorrentPeer = Tracker.Net.Web.TorrentPeer;
-using Torrent = Tracker.Net.Web.Torrent;
+using TorrentPeer = Tracker.Net.Web.Data.TorrentPeer;
+using Torrent = Tracker.Net.Web.Data.Torrent;
 
 namespace Tracker.RavenDb;
 

@@ -1,4 +1,4 @@
-namespace Tracker.Net.Web;
+namespace Tracker.Net.Web.Data;
 
 public class FileItem
 {
