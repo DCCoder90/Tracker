@@ -1,12 +1,12 @@
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
-using Tracker.Data;
-using Tracker.Data.Packets;
-using Tracker.Data.Repository;
-using Tracker.Data.Torrent;
-using Tracker.Data.Util;
-using Action = Tracker.Data.Action;
+using Tracker.Net;
+using Tracker.Net.Packets;
+using Tracker.Net.Repository;
+using Tracker.Net.Torrent;
+using Tracker.Net.Util;
+using Action = Tracker.Net.Action;
 
 namespace Tracker.Service;
 

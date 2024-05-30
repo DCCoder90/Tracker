@@ -1,4 +1,4 @@
-namespace Tracker.Data.Util;
+namespace Tracker.Net.Util;
 
 public enum Endianness
 {

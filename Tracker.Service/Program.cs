@@ -1,4 +1,4 @@
-using Tracker.Data.Repository;
+using Tracker.Net.Repository;
 using Tracker.RavenDb;
 using Tracker.Service;
 

@@ -1,4 +1,4 @@
-namespace Tracker.Data.Repository;
+namespace Tracker.Net.Repository;
 
 public class BackingOptions
 {

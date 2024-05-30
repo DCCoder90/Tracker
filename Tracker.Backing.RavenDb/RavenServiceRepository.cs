@@ -1,9 +1,9 @@
 using Raven.Client.Documents;
 using Raven.Client.Documents.Session;
-using Tracker.Data;
-using Tracker.Data.Repository;
-using Tracker.Data.Torrent;
-using Tracker.Data.Util;
+using Tracker.Net;
+using Tracker.Net.Repository;
+using Tracker.Net.Torrent;
+using Tracker.Net.Util;
 
 namespace Tracker.RavenDb;
 

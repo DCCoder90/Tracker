@@ -1,7 +1,7 @@
-using Tracker.Data.Torrent;
-using Tracker.Data.Util;
+using Tracker.Net.Torrent;
+using Tracker.Net.Util;
 
-namespace Tracker.Data.Packets;
+namespace Tracker.Net.Packets;
 
 public class AnnounceResponse : Packet
 {

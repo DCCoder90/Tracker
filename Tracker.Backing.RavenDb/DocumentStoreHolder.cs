@@ -1,6 +1,6 @@
 using System.Security.Cryptography.X509Certificates;
 using Raven.Client.Documents;
-using Tracker.Data.Repository;
+using Tracker.Net.Repository;
 
 namespace Tracker.RavenDb;
 

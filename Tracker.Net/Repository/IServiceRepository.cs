@@ -1,6 +1,6 @@
-using Tracker.Data.Torrent;
+using Tracker.Net.Torrent;
 
-namespace Tracker.Data.Repository;
+namespace Tracker.Net.Repository;
 
 public interface IServiceRepository
 {

@@ -1,4 +1,4 @@
-namespace Tracker.Data;
+namespace Tracker.Net;
 
 public enum Event
 {
