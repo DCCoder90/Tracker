@@ -12,7 +12,17 @@ public class RavenWebRepository : IWebRepository
         throw new NotImplementedException();
     }
 
+    public Task<Torrent> GetTorrent(string hash, CancellationToken cancellationToken = new CancellationToken())
+    {
+        throw new NotImplementedException();
+    }
+
     public Task AddTorrent(Torrent torrent, CancellationToken cancellationToken = new CancellationToken())
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task RemoveTorrent(string hash, CancellationToken cancellationToken = new CancellationToken())
     {
         throw new NotImplementedException();
     }

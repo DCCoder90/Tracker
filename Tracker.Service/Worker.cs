@@ -69,6 +69,7 @@ public class Worker : BackgroundService
             var action = (Action)Unpack.UInt32(receivedData, 8);
             switch (action)
             {
+                //TODO: Add something in here to ensure we only allow tracking of torrents currently in database
                 case Action.Connect:
                     var connectRequest = new ConnectRequest(receivedData);
                     _logger.LogInformation($"[Connect] from {addressString} :{res.RemoteEndPoint.Port}");
