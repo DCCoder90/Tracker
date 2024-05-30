@@ -20,6 +20,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tracker.FileSys.Tests", "Tr
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{8C46E165-3C50-41B4-BBF0-AC504AC46ED9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tracker.Web", "Tracker.Web\Tracker.Web.csproj", "{CA4AB3BB-2071-46B1-9FC3-AC8F666F8A53}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -50,6 +52,10 @@ Global
 		{B270A9CD-D92E-43CE-A3D8-9789C81C5AB8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B270A9CD-D92E-43CE-A3D8-9789C81C5AB8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B270A9CD-D92E-43CE-A3D8-9789C81C5AB8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CA4AB3BB-2071-46B1-9FC3-AC8F666F8A53}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CA4AB3BB-2071-46B1-9FC3-AC8F666F8A53}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CA4AB3BB-2071-46B1-9FC3-AC8F666F8A53}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CA4AB3BB-2071-46B1-9FC3-AC8F666F8A53}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{B270A9CD-D92E-43CE-A3D8-9789C81C5AB8} = {8C46E165-3C50-41B4-BBF0-AC504AC46ED9}
