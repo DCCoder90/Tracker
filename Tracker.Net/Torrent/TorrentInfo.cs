@@ -1,6 +1,6 @@
-using Tracker.Data.Util;
+using Tracker.Net.Util;
 
-namespace Tracker.Data.Torrent;
+namespace Tracker.Net.Torrent;
 
 public class TorrentInfo
 {

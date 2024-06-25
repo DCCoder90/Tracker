@@ -1,12 +1,12 @@
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
-using Tracker.Data;
-using Tracker.Data.Packets;
-using Tracker.Data.Repository;
-using Tracker.Data.Torrent;
-using Tracker.Data.Util;
-using Action = Tracker.Data.Action;
+using Tracker.Net;
+using Tracker.Net.Packets;
+using Tracker.Net.Repository;
+using Tracker.Net.Util;
+using Action = Tracker.Net.Action;
+using TorrentPeer = Tracker.Net.Torrent.TorrentPeer;
 
 namespace Tracker.Service;
 
@@ -15,18 +15,18 @@ public class Worker : BackgroundService
     private readonly int _announceInterval;
     private readonly int _maxAttempts;
     private readonly ILogger<Worker> _logger;
-    private readonly IRepository _repository;
+    private readonly IServiceRepository _serviceRepository;
     private readonly UdpClient _udpClient;
     private ServiceState _state;
 
-    public Worker(IRepository repository, ILogger<Worker> logger, WorkerOptions options)
+    public Worker(IServiceRepository serviceRepository, ILogger<Worker> logger, WorkerOptions options)
     {
         _announceInterval = options.AnnounceInterval;
         _maxAttempts = options.MaxAttempts;
         
         var localEndpoint = new IPEndPoint(IPAddress.Any, options.Port);
         _udpClient = new UdpClient(localEndpoint);
-        _repository = repository;
+        _serviceRepository = serviceRepository;
 
         _logger = logger;
 
@@ -51,13 +51,13 @@ public class Worker : BackgroundService
 
             var receivedResults = await _udpClient.ReceiveAsync(stoppingToken);
             if (receivedResults.Buffer.Length > 0)
-                await ReceivedData(receivedResults);
+                await ReceivedData(receivedResults, stoppingToken);
             
-            _repository.ClearStale(TimeSpan.FromSeconds(_announceInterval*_maxAttempts));
+            _serviceRepository.ClearStale(TimeSpan.FromSeconds(_announceInterval*_maxAttempts));
         }
     }
 
-    private async Task ReceivedData(UdpReceiveResult res)
+    private async Task ReceivedData(UdpReceiveResult res, CancellationToken cancellationToken)
     {
         _logger.LogInformation("Received information");
         var receivedData = res.Buffer;
@@ -69,6 +69,7 @@ public class Worker : BackgroundService
             var action = (Action)Unpack.UInt32(receivedData, 8);
             switch (action)
             {
+                //TODO: Add something in here to ensure we only allow tracking of torrents currently in database
                 case Action.Connect:
                     var connectRequest = new ConnectRequest(receivedData);
                     _logger.LogInformation($"[Connect] from {addressString} :{res.RemoteEndPoint.Port}");
@@ -87,18 +88,18 @@ public class Worker : BackgroundService
 
                     if ((Event)announceRequest.TorrentEvent == Event.Stopped)
                     {
-                        _repository.RemovePeer(peer, announceRequest.ConnectionID, announceRequest.InfoHash);
+                        await _serviceRepository.RemovePeer(peer, announceRequest.ConnectionID, announceRequest.InfoHash);
                     }
                     else
                     {
                         var type = announceRequest.Left > 0 ? PeerType.Leecher : PeerType.Seeder;
                         if ((Event)announceRequest.TorrentEvent == Event.Unknown)
                             type = PeerType.Seeder;
-                        _repository.AddPeer(peer, announceRequest.ConnectionID, announceRequest.InfoHash,type);
+                        _serviceRepository.AddPeer(peer, announceRequest.ConnectionID, announceRequest.InfoHash,type);
                     }
 
-                    var peers = _repository.GetPeers(announceRequest.InfoHash);
-                    var torrentInfo = _repository.ScrapeHashes(new List<byte[]> { announceRequest.InfoHash });
+                    var peers = await _serviceRepository.GetPeers(announceRequest.InfoHash);
+                    var torrentInfo = await _serviceRepository.ScrapeHashes(new List<byte[]> { announceRequest.InfoHash });
                     var seeders = torrentInfo.First().Seeders;
                     var leechers = torrentInfo.First().Leechers;
                     var announceResponse = new AnnounceResponse(announceRequest.TransactionID, (uint)_announceInterval,
@@ -112,7 +113,7 @@ public class Worker : BackgroundService
                     _logger.LogInformation(
                         $"[Scrape] from {addressString} for {scrapeRequest.InfoHashes.Count} torrents");
 
-                    var scrapedTorrents = _repository.ScrapeHashes(scrapeRequest.InfoHashes);
+                    var scrapedTorrents = await _serviceRepository.ScrapeHashes(scrapeRequest.InfoHashes);
                     var scrapeResponse = new ScrapeResponse(scrapeRequest.TransactionID, scrapedTorrents);
 
                     await SendDataAsync(_udpClient, scrapeResponse.Data, res.RemoteEndPoint);

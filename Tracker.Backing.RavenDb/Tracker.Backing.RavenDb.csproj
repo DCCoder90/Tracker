@@ -8,6 +8,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\Tracker.Net.Web\Tracker.Net.Web.csproj" />
         <ProjectReference Include="..\Tracker.Net\Tracker.Net.csproj"/>
     </ItemGroup>
 

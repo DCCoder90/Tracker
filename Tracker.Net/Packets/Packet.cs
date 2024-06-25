@@ -1,4 +1,4 @@
-namespace Tracker.Data.Packets;
+namespace Tracker.Net.Packets;
 
 public abstract class Packet
 {

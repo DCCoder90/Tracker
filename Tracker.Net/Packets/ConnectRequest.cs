@@ -1,6 +1,6 @@
-using Tracker.Data.Util;
+using Tracker.Net.Util;
 
-namespace Tracker.Data.Packets;
+namespace Tracker.Net.Packets;
 
 public class ConnectRequest : Packet
 {

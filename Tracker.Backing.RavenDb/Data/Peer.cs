@@ -1,6 +1,6 @@
-using Tracker.Data;
+using Tracker.Net;
 
-namespace Tracker.RavenDb;
+namespace Tracker.RavenDb.Data;
 
 internal class Peer
 {
